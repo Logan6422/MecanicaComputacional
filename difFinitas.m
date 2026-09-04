@@ -20,7 +20,7 @@
 # cb_Ej = [1 10 -1]
 
 
-function T = difFinitas(mesh, model, cb, et)
+function T = difFinitas(mesh, model, cb)
   xnode = mesh.xi:mesh.h:mesh.xf; #subdivision 1D
 
   N = length(xnode);
