@@ -6,6 +6,7 @@ clear all;clc;
 ##model.k = 2;
 ##model.c = 0;
 ##model.G = 100;
+##model.transitorio = 0;
 ##
 ##mesh.xi = 0;
 ##mesh.xf = 1;
@@ -14,7 +15,18 @@ clear all;clc;
 ##cb = [1 10 -1;
 ##      1 50 -1];
 ###T = difFinitas(mesh, model, cb, et)
-##T = difFinitas(mesh, model, cb, 0)
+##T = difFinitas(mesh, model, cb);
+##exacta = @(x) -25.*x.^2 + 65.*x + 10;
+##
+##xnode = mesh.xi:mesh.h:mesh.xf;
+##
+##plot(xnode,exacta(xnode),'-r');
+##plot(xnode, T, '-o');
+##hold on;
+##grid on;
+##xlabel('x');
+##ylabel('Temperatura');
+##title('Solución por diferencias finitas');
 
 ###Ej 1b)
 ##model.rhoCp = 0;
@@ -62,31 +74,42 @@ clear all;clc;
 ###T = difFinitas(mesh, model, cb, et)
 ##T = difFinitas(mesh, model, cb, 0)
 
-###Ej 1e)
-##model.rhoCp = 1;
-##model.k = 2;
-##model.c = 0;
-##model.G = @(x) x.^3;
-##model.transitorio = 1;
-##model.tita = 0;
-##model.dt = 0.1;
-##
-##mesh.xi = 5;
-##mesh.xf = 10;
-##mesh.h = 0.1;
-##
-###temperaturas iniciales
-##temp0 = 0;
-##xnode = mesh.xi:mesh.h:mesh.xf;
-##model.T0 = temp0 * ones(length(xnode),1);
-###//////////////////////
-##model.tf = 10;
-##
-##
-##cb = [3 2 100;
-##      1 50 -1];
-##T = difFinitas(mesh, model, cb)
+#Ej 1e)
+model.rhoCp = 1;
+model.k = 2;
+model.c = 0;
+model.G = @(x) x.^3;
+model.transitorio = 1;
+model.tita = 0;
+model.dt = 0.1;
 
+mesh.xi = 5;
+mesh.xf = 10;
+mesh.h = 0.1;
+
+#temperaturas iniciales
+temp0 = 0;
+xnode = mesh.xi:mesh.h:mesh.xf;
+model.T0 = temp0 * ones(length(xnode),1);
+#//////////////////////
+model.tf = 10;
+
+
+cb = [3 2 100;
+      1 50 -1];
+T = difFinitas(mesh, model, cb);
+
+exacta = @(x) (-x.^5)./40 + (1225.*x) ./3 -4600./3;
+xnode = mesh.xi:mesh.h:mesh.xf;
+plot(xnode,exacta(xnode),'-r');
+
+
+##hold on;
+##plot(xnode, T(:,end), '-o');
+##grid on;
+##xlabel('x');
+##ylabel('Temperatura');
+##title('Solución por diferencias finitas');
 
 ###Ej 1f)
 ##model.rhoCp = 2;
@@ -115,27 +138,27 @@ clear all;clc;
 
 
 #Ej 1g)
-model.rhoCp = 1;
-model.k = 2;
-model.c = -2;
-model.G = 0;
-model.transitorio = 1;
-model.tita = 0;
-model.dt = 0.1;
-
-mesh.xi = 0;
-mesh.xf = 1;
-mesh.h = 0.1;
-
-#temperaturas iniciales
-temp0 = 0;
-xnode = mesh.xi:mesh.h:mesh.xf;
-model.T0 = temp0 * ones(length(xnode),1);
-#//////////////////////
-model.tf = 10;
-
-
-cb = [1 50 -1;
-      2 50 -1];
-T = difFinitas(mesh, model, cb)
+##model.rhoCp = 1;
+##model.k = 2;
+##model.c = -2;
+##model.G = 0;
+##model.transitorio = 1;
+##model.tita = 0;
+##model.dt = 0.1;
+##
+##mesh.xi = 0;
+##mesh.xf = 1;
+##mesh.h = 0.1;
+##
+###temperaturas iniciales
+##temp0 = 0;
+##xnode = mesh.xi:mesh.h:mesh.xf;
+##model.T0 = temp0 * ones(length(xnode),1);
+###//////////////////////
+##model.tf = 10;
+##
+##
+##cb = [1 50 -1;
+##      2 50 -1];
+##T = difFinitas(mesh, model, cb)
 
