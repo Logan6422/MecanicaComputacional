@@ -1,5 +1,6 @@
 function [dt] = fem2d_heat_explicit_delta_t(xnode,icone,model)
-    alpha = mean(model.kx,model.ky)/(model.rho*model.cp);
+    conductivity = min([model.kx(:); model.ky(:)]);
+    alpha = conductivity/(model.rho*model.cp);
 
     delta = [];
     

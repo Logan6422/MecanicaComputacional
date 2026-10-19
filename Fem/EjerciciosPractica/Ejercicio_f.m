@@ -24,6 +24,8 @@ model.c = 2;            % CAMBIAR: coeficiente de -c*T
 model.rho = 2;          % CAMBIAR: densidad rho
 model.cp = 1;           % CAMBIAR: calor especifico cp
 model.G = 75;            % CAMBIAR: fuente constante G
+% Cantidad de puntos de Gauss-Legendre para integrar la fuente G.
+model.quadraturePoints = 2; % CAMBIAR: cantidad de puntos (1 a 4)
 % Para una fuente variable usar, por ejemplo:
 % model.G = @(x) 100*(x-3).^2;
 
@@ -41,6 +43,7 @@ cb = [1 0 -1;             % CAMBIAR: borde izquierdo
 %    et=0: Euler explicito.
 %    et=1: Euler implicito.
 %    et=2: estacionario.
+%    et=3: Crank-Nicolson.
 %
 %    Alternativa A: problema estacionario.
 %    et = 2;
@@ -50,10 +53,13 @@ cb = [1 0 -1;             % CAMBIAR: borde izquierdo
 %
 %    Alternativa C: problema transitorio con Euler implicito.
 %    et = 1;
+%
+%    Alternativa D: problema transitorio con Crank-Nicolson.
+%    et = 3;
 et = 0;                    % CAMBIAR
 
-% 5) Datos temporales. Solo se usan si et=0 o et=1.
-if et == 0 || et == 1
+% 5) Datos temporales. Se usan si et=0, et=1 o et=3.
+if et == 0 || et == 1 || et == 3
     % Para Euler explicito, elegir dt pequeno por estabilidad.
     % Para Euler implicito, dt puede ser mas grande, aunque afecta
     % la precision temporal.

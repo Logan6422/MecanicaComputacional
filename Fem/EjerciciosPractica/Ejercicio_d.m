@@ -21,9 +21,11 @@ xnode = linspace(L1,L2,N)';
 %    rho*cp*dT/dt = k*d2T/dx2 - c*T + G.
 model.k = 1;            % CAMBIAR: conductividad k
 model.c = 1;            % CAMBIAR: coeficiente de -c*T
-model.rho = 0;          % CAMBIAR: densidad rho
-model.cp = 0;           % CAMBIAR: calor especifico cp
+model.rho = 1;          % CAMBIAR: densidad rho
+model.cp = 1;           % CAMBIAR: calor especifico cp
 model.G = 50;            % CAMBIAR: fuente constante G
+% Cantidad de puntos de Gauss-Legendre para integrar la fuente G.
+model.quadraturePoints = 2; % CAMBIAR: cantidad de puntos (1 a 4)
 % Para una fuente variable usar, por ejemplo:
 % model.G = @(x) 100*(x-3).^2;
 
@@ -41,10 +43,10 @@ cb = [1 10 -1;             % CAMBIAR: borde izquierdo
 %    et=0: Euler explicito.
 %    et=1: Euler implicito.
 %    et=2: estacionario.
-et = 2;                    % CAMBIAR
+et = 3;                    % CAMBIAR
 
-% 5) Datos temporales. Solo se usan si et=0 o et=1.
-if et == 0 || et == 1
+% 5) Datos temporales. Solo se usan si et=0, et=1 o et=3.
+if et == 0 || et == 1 || et == 3
     model.dt = 0.001;     % CAMBIAR: paso temporal
     model.maxit = 1000;   % CAMBIAR: maximo de iteraciones
     model.tol = 1e-8;     % CAMBIAR: tolerancia
@@ -69,7 +71,7 @@ title('Solucion FEM 1D');
 grid on;
 
 % 9) Mostrar evolucion si el problema es temporal.
-if et == 0 || et == 1
+if et == 0 || et == 1 || et == 3
     graficaEvolucion(xnode,T,model.dt);
 end
 

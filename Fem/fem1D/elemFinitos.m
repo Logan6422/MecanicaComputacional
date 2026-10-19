@@ -8,13 +8,15 @@ function [T] = elemFinitos(xnode, model, cb, et)
     [K,F,dirichletNodes,dirichletValues] = ...
         applyBoundaryConditions1D(K,F,cb);
 
-    if et ~= 0 && et ~= 1
+    if et == 2
         T = solveSteady1D(K,F);
         return;
     end
 
     if et == 1
         T = solveImplicit1D(C,K,F,model,dirichletNodes,dirichletValues);
+    elseif et == 3
+        T = solveCrankNicolson1D(C,K,F,model,dirichletNodes,dirichletValues);
     else
         T = solveExplicit1D(C,K,F,model,dirichletNodes,dirichletValues);
     end
@@ -36,7 +38,14 @@ function validateInputs(xnode,model,cb,numberOfNodes,et)
             error('Falta el campo model.%s.',requiredFields{i});
         end
     end
-    if et == 0 || et == 1
+    if isfield(model,'quadraturePoints')
+        if ~isscalar(model.quadraturePoints) || ...
+                model.quadraturePoints ~= fix(model.quadraturePoints) || ...
+                model.quadraturePoints < 1 || model.quadraturePoints > 4
+            error('model.quadraturePoints debe ser un entero entre 1 y 4.');
+        end
+    end
+    if et == 0 || et == 1 || et == 3
         temporalFields = {'dt','maxit','tol','T0'};
         for i = 1 : length(temporalFields)
             if ~isfield(model,temporalFields{i})

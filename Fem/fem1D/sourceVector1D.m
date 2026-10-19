@@ -1,12 +1,15 @@
-function [localF] = sourceVector1D(xLeft,xRight,G)
+function [localF] = sourceVector1D(xLeft,xRight,G,numberOfPoints)
 % Calcula el vector local de fuente para G constante o G(x) variable.
 %
 % Fe = integral(N' * G(x) dx)
-% Se usa cuadratura de Gauss de dos puntos.
+% numberOfPoints indica la cantidad de puntos de Gauss-Legendre.
+
+    if nargin < 4
+        numberOfPoints = 2;
+    end
+    [naturalPoints,weights] = gaussLegendreRule(numberOfPoints);
 
     elementLength = xRight - xLeft;
-    gaussPoint = 1/sqrt(3);
-    naturalPoints = [-gaussPoint, gaussPoint];
     localF = zeros(2,1);
 
     for i = 1 : length(naturalPoints)
@@ -22,6 +25,33 @@ function [localF] = sourceVector1D(xLeft,xRight,G)
             sourceValue = G;
         end
 
-        localF = localF + shape*sourceValue*(elementLength/2);
+        if ~isscalar(sourceValue)
+            error('G debe devolver un valor escalar para cada coordenada x.');
+        end
+
+        localF = localF + shape*sourceValue*weights(i)*(elementLength/2);
+    end
+end
+
+function [naturalPoints,weights] = gaussLegendreRule(numberOfPoints)
+    switch numberOfPoints
+        case 1
+            naturalPoints = 0;
+            weights = 2;
+        case 2
+            naturalPoints = [-1/sqrt(3), 1/sqrt(3)];
+            weights = [1, 1];
+        case 3
+            naturalPoints = [-sqrt(3/5), 0, sqrt(3/5)];
+            weights = [5/9, 8/9, 5/9];
+        case 4
+            naturalPoints = [-sqrt((3+2*sqrt(6/5))/7), ...
+                             -sqrt((3-2*sqrt(6/5))/7), ...
+                              sqrt((3-2*sqrt(6/5))/7), ...
+                              sqrt((3+2*sqrt(6/5))/7)];
+            weights = [(18-sqrt(30))/36, (18+sqrt(30))/36, ...
+                       (18+sqrt(30))/36, (18-sqrt(30))/36];
+        otherwise
+            error('La cuadratura de Gauss admite entre 1 y 4 puntos.');
     end
 end

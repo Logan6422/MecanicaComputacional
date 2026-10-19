@@ -20,6 +20,8 @@ model.c = 0;
 model.rho = 1;
 model.cp = 1;
 model.G = 100;
+% Cantidad de puntos de Gauss-Legendre para integrar la fuente G.
+model.quadraturePoints = 2;
 
 % Cada fila corresponde a un extremo: [tipo valor dato3].
 % Tipo 1: Dirichlet [1 temperatura -1].
@@ -32,7 +34,10 @@ cb = [1 10 -1;
 xnode_componentes = linspace(L1,L2,6)';
 componentes = mostrar_componentes(xnode_componentes,model,cb);
 
-% et = 0: explicito, et = 1: implicito, otro valor: estacionario.
+% et = 0: Euler explicito.
+% et = 1: Euler implicito.
+% et = 2: estacionario.
+% et = 3: Crank-Nicolson.
 et = 2;
 
 % Resuelve el problema completo.

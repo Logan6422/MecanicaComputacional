@@ -1,15 +1,15 @@
-function [PHI,Q] = fem2d_heat_solve(K,C,F,xnode,icone,model)
+function [PHI,Q] = fem2d_heat_solve(K,C,F,xnode,icone,model,DIR)
     % Esquema temporal: [0] Explícito, [1] Implícito, [X] Estacionario
     if model.ts == 0 % Explicit
         disp('Iniciando esquemas temporales...');
         % Paso temporal del método explícito Explícito (Forward Euler)
         [dt] = fem2d_heat_explicit_delta_t(xnode,icone,model);
-        [PHI,Q] = fem2d_heat_explicit(K,C,F,xnode,icone,model,dt);
+        [PHI,Q] = fem2d_heat_explicit(K,C,F,xnode,icone,model,dt,DIR);
     elseif model.ts == 1 % Implicit
         disp('Iniciando esquemas temporales...');
         % Paso temporal arbitrario
         dt = model.dt;
-        [PHI,Q] = fem2d_heat_implicit(K,C,F,xnode,icone,model,dt);
+        [PHI,Q] = fem2d_heat_implicit(K,C,F,xnode,icone,model,dt,DIR);
     else % Estado Estacionario
         disp('Resolución del sistema de ecuaciones...');
         % Resolución del sistema lineal de ecuaciones

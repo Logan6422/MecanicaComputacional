@@ -21,6 +21,8 @@ model.c = 1;
 model.rho = 0;
 model.cp = 0;
 model.G = 0;
+% Cantidad de puntos de Gauss-Legendre para integrar la fuente G.
+model.quadraturePoints = 2;
 
 % 4) Completa las condiciones de borde.
 %    Fila 1: extremo izquierdo x=L1.
@@ -38,14 +40,15 @@ xnode_componentes = linspace(L1,L2,5)';
 componentes = mostrar_componentes(xnode_componentes,model,cb);
 
 % 5) Elegi el esquema.
-%    et=0: explicito.
-%    et=1: implicito.
-%    otro valor: estacionario.
+%    et=0: Euler explicito.
+%    et=1: Euler implicito.
+%    et=2: estacionario.
+%    et=3: Crank-Nicolson.
 et = 2;
 
-% 6) Si et es 0 o 1, agrega estos datos temporales.
+% 6) Si et es 0, 1 o 3, agrega estos datos temporales.
 %    T0 debe tener una temperatura inicial por nodo.
-if et == 0 || et == 1
+if et == 0 || et == 1 || et == 3
     model.dt = 0.001;
     model.maxit = 1000;
     model.tol = 1e-8;
@@ -67,7 +70,7 @@ title('Solucion FEM 1D');
 grid on;
 
 % 10) En un problema temporal, muestra toda la evolucion.
-if et == 0 || et == 1
+if et == 0 || et == 1 || et == 3
     graficaEvolucion(xnode,T,model.dt);
 end
 

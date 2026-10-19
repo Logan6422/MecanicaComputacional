@@ -139,7 +139,14 @@ function T = difFinitas(mesh, model, cb)
     C = model.rhoCp;
     dt = model.dt;
     theta = model.tita;
-    T = model.T0;
+    T = model.T0(:);
+    T_hist = T;
+
+    if isfield(model, "tol")
+      tol = model.tol;
+    else
+      tol = -1; # Sin tolerancia: se utilizan todos los pasos de model.tf.
+    endif
 
     # Cantidad de pasos temporales
     cantPasos = round(model.tf / dt);
@@ -283,6 +290,8 @@ function T = difFinitas(mesh, model, cb)
       endswitch
 
 
+      T_anterior = T;
+
       # RESOLVEMOS PARA OBTENER T(n+1)
       T = A\b;
 
@@ -296,7 +305,20 @@ function T = difFinitas(mesh, model, cb)
         T(N) = cb(2,2);
       endif
 
+      T_hist = [T_hist, T];
+
+      # Norma infinito del cambio entre dos pasos consecutivos.
+      cambio = max(abs(T - T_anterior));
+      if cambio < tol
+        printf("Convergencia alcanzada en t = %g, cambio = %e\n", ...
+               paso * dt, cambio);
+        break;
+      endif
+
     endfor
+
+    # Se devuelve toda la historia: T(:,1) es la condicion inicial.
+    T = T_hist;
 
   endif
 

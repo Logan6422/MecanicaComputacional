@@ -24,6 +24,8 @@ model.c = 0;            % CAMBIAR: coeficiente de -c*T
 model.rho = 0;          % CAMBIAR: densidad rho
 model.cp = 0;           % CAMBIAR: calor especifico cp
 model.G = @(x) 100*(x-3).^2; % Fuente variable G(x)
+% Cantidad de puntos de Gauss-Legendre para integrar la fuente G(x).
+model.quadraturePoints = 2; % CAMBIAR: cantidad de puntos (1 a 4)
 
 % 3) Condiciones de borde.
 %    Fila 1: extremo izquierdo x=L1.
@@ -39,10 +41,11 @@ cb = [2 2 -1;             % CAMBIAR: borde izquierdo
 %    et=0: Euler explicito.
 %    et=1: Euler implicito.
 %    et=2: estacionario.
+%    et=3: Crank-Nicolson.
 et = 2;                    % CAMBIAR
 
-% 5) Datos temporales. Solo se usan si et=0 o et=1.
-if et == 0 || et == 1
+% 5) Datos temporales. Se usan si et=0, et=1 o et=3.
+if et == 0 || et == 1 || et == 3
     model.dt = 0.001;     % CAMBIAR: paso temporal
     model.maxit = 1000;   % CAMBIAR: maximo de iteraciones
     model.tol = 1e-8;     % CAMBIAR: tolerancia
@@ -67,7 +70,7 @@ title('Solucion FEM 1D');
 grid on;
 
 % 9) Mostrar evolucion si el problema es temporal.
-if et == 0 || et == 1
+if et == 0 || et == 1 || et == 3
     graficaEvolucion(xnode,T,model.dt);
 end
 

@@ -24,6 +24,8 @@ model.c = -2;            % CAMBIAR: coeficiente de -c*T
 model.rho = 1;          % CAMBIAR: densidad rho
 model.cp = 1;           % CAMBIAR: calor especifico cp
 model.G = 0;            % CAMBIAR: fuente constante G
+% Cantidad de puntos de Gauss-Legendre para integrar la fuente G.
+model.quadraturePoints = 2; % CAMBIAR: cantidad de puntos (1 a 4)
 % Para una fuente variable usar, por ejemplo:
 % model.G = @(x) 100*(x-3).^2;
 
@@ -41,6 +43,7 @@ cb = [1 50 -1;             % CAMBIAR: borde izquierdo
 %    et=0: Euler explicito.
 %    et=1: Euler implicito.
 %    et=2: estacionario.
+%    et=3: Crank-Nicolson.
 %
 %    Alternativa A: problema estacionario.
 %    et = 2;
@@ -50,13 +53,16 @@ cb = [1 50 -1;             % CAMBIAR: borde izquierdo
 %
 %    Alternativa C: problema transitorio con Euler implicito.
 %    et = 1;
-et = 0;                    % CAMBIAR
+%
+%    Alternativa D: problema transitorio con Crank-Nicolson.
+%    et = 3;
+et = 3;                    % CAMBIAR
 
-% 5) Datos temporales. Solo se usan si et=0 o et=1.
-if et == 0 || et == 1
+% 5) Datos temporales. Solo se usan si et=0, et=1 o et=3.
+if et == 0 || et == 1 || et == 3
     % Para Euler explicito, elegir dt pequeno por estabilidad.
-    % Para Euler implicito, dt puede ser mas grande, aunque afecta
-    % la precision temporal.
+    % Para Euler implicito o Crank-Nicolson, dt puede ser mas grande,
+    % aunque afecta la precision temporal.
     model.dt = 0.001;     % CAMBIAR: paso temporal
     model.maxit = 1000;   % CAMBIAR: maximo de iteraciones
     model.tol = 1e-8;     % CAMBIAR: tolerancia de convergencia
@@ -90,7 +96,7 @@ title('Solucion FEM 1D');
 grid on;
 
 % 9) Mostrar evolucion si el problema es temporal.
-if et == 0 || et == 1
+if et == 0 || et == 1 || et == 3
     graficaEvolucion(xnode,T,model.dt);
 end
 

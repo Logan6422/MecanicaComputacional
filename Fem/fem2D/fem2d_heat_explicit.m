@@ -1,4 +1,4 @@
-function [PHI_vec,Q_vec] = fem2d_heat_explicit(K,C,F,xnode,icone,model,dt)
+function [PHI_vec,Q_vec] = fem2d_heat_explicit(K,C,F,xnode,icone,model,dt,DIR)
 % Descripción: módulo para resolver el sistema lineal de ecuaciones utilizando
 % esquema temporal explícito.
 
@@ -26,12 +26,14 @@ function [PHI_vec,Q_vec] = fem2d_heat_explicit(K,C,F,xnode,icone,model,dt)
 
     auxA = dt/(model.rho*model.cp);
     PHI = model.PHI_n;
+    PHI = applyDirichletValues(PHI,DIR);
     PHI_n = model.PHI_n;
     PHI_vec = PHI;
     Q_vec = zeros(model.nnodes,2);
 
     for n = 1 : model.maxit
         PHI = C\(auxA*(F-K*PHI_n) + C*PHI_n);
+        PHI = applyDirichletValues(PHI,DIR);
         denominator = norm(PHI,2);
 
         if denominator == 0
@@ -49,5 +51,11 @@ function [PHI_vec,Q_vec] = fem2d_heat_explicit(K,C,F,xnode,icone,model,dt)
             disp('Metodo terminado por tolerancia de error.');
             return;
         end
+    end
+end
+
+function PHI = applyDirichletValues(PHI,DIR)
+    for i = 1:size(DIR,1)
+        PHI(DIR(i,1)) = DIR(i,2);
     end
 end

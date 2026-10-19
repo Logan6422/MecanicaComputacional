@@ -18,5 +18,5 @@ function [PHI,Q] = fem2d_heat(xnode,icone,DIR,NEU,ROB,PUN,model)
     [K,F] = fem2d_heat_dirichlet(K,F,DIR);
     
     % Resolución del sistema lineal de ecuaciones
-    [PHI,Q] = fem2d_heat_solve(K,C,F,xnode,icone,model);
+    [PHI,Q] = fem2d_heat_solve(K,C,F,xnode,icone,model,DIR);
 end
